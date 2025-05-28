@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
 class DashboardScreen extends StatelessWidget {
-  final String userName = 'Shubhi'; // Updated name here
+  final String userName = 'Shubhi';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Gradient background similar to PhonePe style
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -23,57 +22,26 @@ class DashboardScreen extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius:
-                    BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
                   ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 25),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildGreeting(),
-                          SizedBox(height: 20),
-
-                          // Wallet + Recharge & Bills Section in a Column
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildWalletCard(),
-                              SizedBox(height: 25),
-
-                              // Recharge & Bills Section Title
-                              Text(
-                                'Recharge & Bills',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF7B1FA2),
-                                ),
-                              ),
-                              SizedBox(height: 16),
-
-                              // Recharge & Bills Options
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  _rechargeBillItem(Icons.phone_android, 'Mobile Recharge'),
-                                  _rechargeBillItem(Icons.tv, 'DTH Recharge'),
-                                  _rechargeBillItem(Icons.lightbulb, 'Electricity Bill'),
-                                  _rechargeBillItem(Icons.water, 'Water Bill'),
-                                ],
-                              ),
-                            ],
-                          ),
-
-                          SizedBox(height: 30),
-                          _buildQuickActions(),
-                          SizedBox(height: 30),
-                          _buildExploreTitle(),
-                          SizedBox(height: 16),
-                          _buildServicesGrid(),
-                        ],
-                      ),
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildGreeting(),
+                        SizedBox(height: 20),
+                        _buildMoneyTransferSection(),
+                        SizedBox(height: 30),
+                        _buildRechargeAndBills(),
+                        SizedBox(height: 30),
+                        _buildFinanceButtons(),
+                        SizedBox(height: 30),
+                        buildManagePaymentsSection(),
+                        SizedBox(height: 30),
+                        _buildSponsoredLinks(),
+                        SizedBox(height: 80), // To avoid bottom nav bar overlay
+                      ],
                     ),
                   ),
                 ),
@@ -82,15 +50,9 @@ class DashboardScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Color(0xFF7B1FA2),
-        unselectedItemColor: Colors.grey,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
-          BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'Profile'),
-        ],
-      ),
+      bottomNavigationBar: _buildBottomNavigationBar(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: _buildFloatingQRButton(),
     );
   }
 
@@ -120,9 +82,8 @@ class DashboardScreen extends StatelessWidget {
                   Expanded(
                     child: TextField(
                       decoration: InputDecoration(
-                        hintText: 'Search for services, recharge, pay bills...',
+                        hintText: 'Search services, offers...',
                         border: InputBorder.none,
-                        isDense: true,
                       ),
                     ),
                   ),
@@ -143,194 +104,304 @@ class DashboardScreen extends StatelessWidget {
       style: TextStyle(
         fontSize: 26,
         fontWeight: FontWeight.bold,
-        color: Color(0xFF7B1FA2),
+        color: Colors.black,
       ),
     );
   }
 
-  Widget _buildWalletCard() {
-    return Container(
-      padding: EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Color(0xFF7B1FA2),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.purple.shade300.withOpacity(0.5),
-            blurRadius: 10,
-            offset: Offset(0, 5),
-          )
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Wallet Balance',
-            style: TextStyle(color: Colors.white70, fontSize: 18),
-          ),
-          SizedBox(height: 8),
-          Text(
-            '₹ 12,345',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
-            ),
-          ),
-          SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _walletActionButton(Icons.send, 'Send'),
-              _walletActionButton(Icons.phone_android, 'Recharge'),
-              _walletActionButton(Icons.payment, 'Pay Bills'),
-              _walletActionButton(Icons.history, 'History'),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _walletActionButton(IconData icon, String label) {
+  Widget _buildMoneyTransferSection() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CircleAvatar(
-          radius: 25,
-          backgroundColor: Colors.white,
-          child: Icon(icon, size: 28, color: Color(0xFF7B1FA2)),
+        Text(
+          'Money Transfer',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
         ),
-        SizedBox(height: 8),
-        Text(label,
-            style: TextStyle(
-              color: Color(0xFF7B1FA2),
-              fontWeight: FontWeight.w600,
-            )),
+        SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _quickButton(Icons.phone_android, 'To Mobile\nNumber'),
+            _quickButton(Icons.account_balance, 'To Bank\nAccount'),
+            _quickButton(Icons.person, 'To Self\nA/C'),
+            _quickButton(Icons.account_balance_wallet, 'Check\nBalance'),
+          ],
+        ),
       ],
     );
   }
 
-  Widget _rechargeBillItem(IconData icon, String label) {
+  Widget _buildRechargeAndBills() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Recharge & Bills',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _quickButton(Icons.phone_android, 'Mobile\nRecharge'),
+            _quickButton(Icons.tv, 'DTH\nRecharge'),
+            _quickButton(Icons.lightbulb, 'Electricity\nBill'),
+            _quickButton(Icons.water, 'Water\nBill'),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFinanceButtons() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Financial Services',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        SizedBox(height: 16),
+        Wrap(
+          spacing: 20,
+          runSpacing: 20,
+          children: [
+            _enhancedFinanceButton(Icons.attach_money, 'Loans'),
+            _enhancedFinanceButton(Icons.security, 'Insurance'),
+            _enhancedFinanceButton(Icons.savings, 'Savings'),
+            _enhancedFinanceButton(Icons.bar_chart, 'Mutual Funds'),
+            _enhancedFinanceButton(Icons.flight_takeoff, 'Travel & Transit'),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _quickButton(IconData icon, String label) {
     return Column(
       children: [
         CircleAvatar(
           radius: 28,
           backgroundColor: Color(0xFFEDE7F6),
-          child: Icon(icon, size: 30, color: Color(0xFF7B1FA2)),
+          child: Icon(icon, size: 28, color: Color(0xFF7B1FA2)), // purple icons
         ),
         SizedBox(height: 8),
         Text(
           label,
-          style: TextStyle(
-            color: Color(0xFF7B1FA2),
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-          ),
           textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildQuickActions() {
-    return SizedBox(
-      height: 110,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          _quickActionItem(Icons.local_grocery_store, 'Groceries'),
-          _quickActionItem(Icons.train, 'Tickets'),
-          _quickActionItem(Icons.fastfood, 'Food'),
-          _quickActionItem(Icons.movie, 'Movies'),
-          _quickActionItem(Icons.more_horiz, 'More'),
+  Widget _enhancedFinanceButton(IconData icon, String label) {
+    return Container(
+      width: 140,
+      padding: EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.purple.shade100),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade300,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
         ],
       ),
-    );
-  }
-
-  Widget _quickActionItem(IconData icon, String label) {
-    return Padding(
-      padding: EdgeInsets.only(right: 20),
       child: Column(
         children: [
-          CircleAvatar(
-            radius: 30,
-            backgroundColor: Color(0xFFEDE7F6),
-            child: Icon(icon, size: 32, color: Color(0xFF7B1FA2)),
-          ),
+          Icon(icon, color: Colors.black, size: 28),
           SizedBox(height: 10),
           Text(
             label,
             style: TextStyle(
-              color: Color(0xFF7B1FA2),
+              color: Colors.black,
               fontWeight: FontWeight.w600,
               fontSize: 14,
             ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildExploreTitle() {
-    return Text(
-      'Explore',
-      style: TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.bold,
-        color: Color(0xFF7B1FA2),
-      ),
-    );
-  }
-
-  Widget _buildServicesGrid() {
-    return GridView.count(
-      crossAxisCount: 3,
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      crossAxisSpacing: 18,
-      mainAxisSpacing: 18,
+  Widget buildManagePaymentsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _serviceTile(Icons.local_offer, 'Offers'),
-        _serviceTile(Icons.local_taxi, 'Taxi'),
-        _serviceTile(Icons.card_giftcard, 'Gifts'),
-        _serviceTile(Icons.money, 'Loans'),
-        _serviceTile(Icons.movie_filter, 'Movies'),
-        _serviceTile(Icons.more_horiz, 'More'),
+        Text(
+          'Manage Payments',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        SizedBox(height: 14),
+        GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          childAspectRatio: 3.2,
+          children: [
+            _paymentOptionButton(Icons.account_balance_wallet, 'Wallet'),
+            _paymentOptionButton(Icons.flash_on, 'UPI Lite'),
+            _paymentOptionButton(Icons.group, 'UPI Circle'),
+            _paymentOptionButton(Icons.credit_card, 'Get Credit Card'),
+          ],
+        ),
       ],
     );
   }
 
-  Widget _serviceTile(IconData icon, String label) {
+  Widget _paymentOptionButton(IconData icon, String label) {
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xFFF3E5F5),
-        borderRadius: BorderRadius.circular(15),
+        color: Color(0xFFF2F2F2),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.purple.shade100.withOpacity(0.5),
-            blurRadius: 6,
-            offset: Offset(0, 3),
-          )
+            color: Colors.grey.shade300,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Icon(icon, size: 36, color: Color(0xFF7B1FA2)),
-          SizedBox(height: 10),
-          Text(
-            label,
-            style: TextStyle(
-              color: Color(0xFF7B1FA2),
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
+          Icon(icon, color: Colors.purple, size: 24),
+          SizedBox(width: 10),
+          Flexible(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSponsoredLinks() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Sponsored Links',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _sponsoredLinkItem('assets/rummycircle.png', 'Rummy Circle'),
+            _sponsoredLinkItem('assets/zupee.png', 'Zupee'),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _sponsoredLinkItem(String imagePath, String title) {
+    return Column(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.asset(
+            imagePath,
+            height: 60,
+            width: 60,
+            fit: BoxFit.cover,
+          ),
+        ),
+        SizedBox(height: 6),
+        Text(
+          title,
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Bottom Navigation Bar mimicking PhonePe style
+  Widget _buildBottomNavigationBar() {
+    return BottomAppBar(
+      shape: CircularNotchedRectangle(),
+      notchMargin: 8,
+      color: Colors.white,
+      elevation: 10,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _bottomNavItem(Icons.home, "Home", 0),
+            _bottomNavItem(Icons.search, "Search", 1),
+            SizedBox(width: 48), // space for floating button
+            _bottomNavItem(Icons.notifications_none, "Alert", 3),
+            _bottomNavItem(Icons.history, "History", 4),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _bottomNavItem(IconData icon, String label, int index) {
+    // For simplicity, no state change on selection here
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: Colors.grey[800], size: 28),
+        SizedBox(height: 4),
+        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[800])),
+      ],
+    );
+  }
+
+  // Floating QR Scanner Button
+  Widget _buildFloatingQRButton() {
+    return FloatingActionButton(
+      onPressed: () {
+        // TODO: Add QR scan functionality here
+      },
+      backgroundColor: Color(0xFF7B1FA2),
+      child: Icon(Icons.qr_code_scanner, size: 30),
+      elevation: 6,
     );
   }
 }
