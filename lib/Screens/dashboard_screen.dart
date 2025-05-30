@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:phonepay_clone/Screens/History_page.dart';
 
 class DashboardScreen extends StatelessWidget {
-  final String userName = 'Shubhi';
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,8 +28,6 @@ class DashboardScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildGreeting(),
-                        SizedBox(height: 20),
                         _buildMoneyTransferSection(),
                         SizedBox(height: 30),
                         _buildRechargeAndBills(),
@@ -50,7 +47,7 @@ class DashboardScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: _buildBottomNavigationBar(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: _buildFloatingQRButton(),
     );
@@ -60,51 +57,14 @@ class DashboardScreen extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           CircleAvatar(
             radius: 24,
-            backgroundColor: Colors.white,
-            child: Icon(Icons.person, color: Color(0xFF7B1FA2), size: 30),
+            backgroundImage: AssetImage('assets/user.png'), // Replace with your asset path
           ),
-          SizedBox(width: 16),
-          Expanded(
-            child: Container(
-              height: 42,
-              padding: EdgeInsets.symmetric(horizontal: 15),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.9),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.search, color: Colors.grey[600]),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search services, offers...',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(width: 16),
-          Icon(Icons.notifications_none, color: Colors.white, size: 28),
+          Icon(Icons.help_outline, color: Colors.white, size: 28),
         ],
-      ),
-    );
-  }
-
-  Widget _buildGreeting() {
-    return Text(
-      'Hi, $userName 👋',
-      style: TextStyle(
-        fontSize: 26,
-        fontWeight: FontWeight.bold,
-        color: Colors.black,
       ),
     );
   }
@@ -195,7 +155,7 @@ class DashboardScreen extends StatelessWidget {
         CircleAvatar(
           radius: 28,
           backgroundColor: Color(0xFFEDE7F6),
-          child: Icon(icon, size: 28, color: Color(0xFF7B1FA2)), // purple icons
+          child: Icon(icon, size: 28, color: Color(0xFF7B1FA2)),
         ),
         SizedBox(height: 8),
         Text(
@@ -291,7 +251,6 @@ class DashboardScreen extends StatelessWidget {
       ),
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Icon(icon, color: Colors.purple, size: 24),
           SizedBox(width: 10),
@@ -358,8 +317,7 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // Bottom Navigation Bar mimicking PhonePe style
-  Widget _buildBottomNavigationBar() {
+  Widget _buildBottomNavigationBar(BuildContext context) {
     return BottomAppBar(
       shape: CircularNotchedRectangle(),
       notchMargin: 8,
@@ -370,34 +328,40 @@ class DashboardScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _bottomNavItem(Icons.home, "Home", 0),
-            _bottomNavItem(Icons.search, "Search", 1),
-            SizedBox(width: 48), // space for floating button
-            _bottomNavItem(Icons.notifications_none, "Alert", 3),
-            _bottomNavItem(Icons.history, "History", 4),
+            _bottomNavItem(Icons.home, "Home", () {}),
+            _bottomNavItem(Icons.search, "Search", () {}),
+            SizedBox(width: 48), // Floating button space
+            _bottomNavItem(Icons.notifications_none, "Alert", () {}),
+            _bottomNavItem(Icons.history, "History", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HistoryPage()),
+              );
+            }),
           ],
         ),
       ),
     );
   }
 
-  Widget _bottomNavItem(IconData icon, String label, int index) {
-    // For simplicity, no state change on selection here
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: Colors.grey[800], size: 28),
-        SizedBox(height: 4),
-        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[800])),
-      ],
+  Widget _bottomNavItem(IconData icon, String label, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.grey[800], size: 28),
+          SizedBox(height: 4),
+          Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[800])),
+        ],
+      ),
     );
   }
 
-  // Floating QR Scanner Button
   Widget _buildFloatingQRButton() {
     return FloatingActionButton(
       onPressed: () {
-        // TODO: Add QR scan functionality here
+        // TODO: Add QR functionality
       },
       backgroundColor: Color(0xFF7B1FA2),
       child: Icon(Icons.qr_code_scanner, size: 30),
